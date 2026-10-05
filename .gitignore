@@ -1,6 +1,8 @@
 # Miscellaneous
 *.class
 *.lock
+# Keep the application's resolved dependency versions when available.
+!/pubspec.lock
 *.log
 *.pyc
 *.swp
