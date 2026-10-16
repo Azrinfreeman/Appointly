@@ -2,7 +2,7 @@
 
 **A Flutter mobile application for managing appointments, recurring schedules, and client details with local device storage.**
 
-Appointly combines a calendar, appointment history, and client views in one application. Users can create a booking, choose a reminder, reuse contact details, and export appointment records as JSON. The repository retains its existing name, `CalendarAppointmentApp`.
+Appointly combines a calendar, appointment history, and client views in one application. Users can create a booking, choose a reminder, reuse contact details, and export appointment records as JSON.
 
 ## Features in the source
 
