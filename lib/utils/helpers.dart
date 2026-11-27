@@ -1,8 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../appointment.dart';
+import 'calendar_export.dart'
+    if (dart.library.js_interop) 'calendar_export_web.dart';
 
 class TimeSegmentColors {
   final Color baseColor;
@@ -159,13 +158,8 @@ Future<void> exportToIcs(BuildContext context, Appointment appt, DateTime occurr
       'END:VEVENT\n'
       'END:VCALENDAR\n';
 
-    final tempDir = await getTemporaryDirectory();
     final fileName = 'appointment_${appt.clientName.replaceAll(RegExp(r'[^\w]'), '_')}.ics';
-    final file = File('${tempDir.path}/$fileName');
-    await file.writeAsString(icsContent);
-
-    final xFile = XFile(file.path, mimeType: 'text/calendar');
-    await Share.shareXFiles([xFile], subject: 'Appointment for ${appt.clientName}');
+    await exportCalendarFile(icsContent, fileName, 'Appointment for ${appt.clientName}');
   } catch (e) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

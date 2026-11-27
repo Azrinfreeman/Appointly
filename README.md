@@ -19,6 +19,15 @@ These are implemented source features, not a claim that every flow has passed de
 
 ## A typical workflow
 
+For the browser build, use `flutter build web --base-href /Appointly/`. Open the
+demo in its own tab so it can save appointments in browser storage. The browser
+version supports manual contact entry and calendar export. Scheduled device
+notifications and native contact selection are available on mobile.
+
+For the first GitHub Pages deployment, set the publishing source to
+**GitHub Actions** in the repository's Pages settings. The **Flutter web**
+workflow builds pull requests and deploys from `main`.
+
 1. Complete onboarding and select a date in the calendar.
 2. Add an appointment with client details, an optional time, recurrence, and reminder offset.
 3. Review bookings in Calendar, History, or Clients; use search to find a client.
