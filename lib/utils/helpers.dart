@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -159,8 +161,18 @@ Future<void> exportToIcs(BuildContext context, Appointment appt, DateTime occurr
       'END:VEVENT\n'
       'END:VCALENDAR\n';
 
-    final tempDir = await getTemporaryDirectory();
     final fileName = 'appointment_${appt.clientName.replaceAll(RegExp(r'[^\w]'), '_')}.ics';
+    if (kIsWeb) {
+      final xFile = XFile.fromData(
+        utf8.encode(icsContent),
+        mimeType: 'text/calendar',
+        name: fileName,
+      );
+      await Share.shareXFiles([xFile]);
+      return;
+    }
+
+    final tempDir = await getTemporaryDirectory();
     final file = File('${tempDir.path}/$fileName');
     await file.writeAsString(icsContent);
 

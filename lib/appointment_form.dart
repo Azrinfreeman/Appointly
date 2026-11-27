@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -101,6 +102,36 @@ class _AppointmentFormState extends State<AppointmentForm> {
         .toList();
     setState(() {
       _nameSuggestions = matches;
+    });
+  }
+
+  Future<void> _selectContact() async {
+    try {
+      final picker = FlutterNativeContactPicker();
+      final Contact? contact = await picker.selectContact();
+      final numbers = contact?.phoneNumbers;
+      if (!mounted || numbers == null || numbers.isEmpty) {
+        return;
+      }
+      final cleanPhone = numbers.first.replaceAll(RegExp(r'[\s\-()]+'), '');
+      _phoneController.text = cleanPhone;
+      _checkWhatsappWarning(cleanPhone);
+      final name = contact?.fullName;
+      if (_nameController.text.isEmpty && name != null) {
+        _nameController.text = name;
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to pick contact: $error')),
+        );
+      }
+    }
+  }
+
+  void _changeReminder(int? minutes) {
+    setState(() {
+      _reminderMinutesBefore = minutes ?? 1440;
     });
   }
 
@@ -234,29 +265,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                   ),
                   const SizedBox(width: 8),
                   IconButton.filledTonal(
-                    onPressed: () async {
-                      try {
-                        final FlutterNativeContactPicker contactPicker = FlutterNativeContactPicker();
-                        final Contact? contact = await contactPicker.selectContact();
-                        if (contact != null && contact.phoneNumbers != null && contact.phoneNumbers!.isNotEmpty) {
-                          String rawPhone = contact.phoneNumbers!.first;
-                          String cleanPhone = rawPhone.replaceAll(RegExp(r'[\s\-()]+'), '');
-                          setState(() {
-                            _phoneController.text = cleanPhone;
-                            _checkWhatsappWarning(cleanPhone);
-                            if (_nameController.text.isEmpty && contact.fullName != null) {
-                              _nameController.text = contact.fullName!;
-                            }
-                          });
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Failed to pick contact: $e')),
-                          );
-                        }
-                      }
-                    },
+                    onPressed: kIsWeb ? null : _selectContact,
                     icon: const Icon(Icons.contact_phone),
                     tooltip: provider.translate('selectFromContacts'),
                   ),
@@ -300,7 +309,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<int>(
-                initialValue: _reminderMinutesBefore,
+                initialValue: kIsWeb ? -1 : _reminderMinutesBefore,
                 decoration: InputDecoration(
                   labelText: provider.translate('reminderTiming'),
                   border: const OutlineInputBorder(),
@@ -327,11 +336,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                     child: Text(provider.translate('reminder2Days')),
                   ),
                 ],
-                onChanged: (value) {
-                  setState(() {
-                    _reminderMinutesBefore = value ?? 1440;
-                  });
-                },
+                onChanged: kIsWeb ? null : _changeReminder,
               ),
               const SizedBox(height: 12),
               Row(
@@ -415,7 +420,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                       minute: _selectedTime?.minute,
                       recurrenceType: _recurrenceType,
                       excludedDates: widget.appointment?.excludedDates,
-                      reminderMinutesBefore: _reminderMinutesBefore,
+                      reminderMinutesBefore: kIsWeb ? -1 : _reminderMinutesBefore,
                     );
 
                     await provider.addAppointment(appt);

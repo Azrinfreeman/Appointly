@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'database_service.dart';
 
@@ -25,11 +26,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: '100% Secure & Offline',
       description: 'Your privacy is guaranteed. All records, names, locations, and phone numbers are stored offline on your device and never uploaded to any servers.',
     ),
-    OnboardingData(
-      icon: Icons.notifications_active_rounded,
-      title: 'Smart Reminders & WhatsApp',
-      description: 'Automatic reminders are scheduled 1 day before client visits. Seamlessly message clients via WhatsApp with a single tap.',
-    ),
+    if (!kIsWeb)
+      OnboardingData(
+        icon: Icons.notifications_active_rounded,
+        title: 'Smart Reminders & WhatsApp',
+        description: 'Automatic reminders are scheduled 1 day before client visits. Seamlessly message clients via WhatsApp with a single tap.',
+      ),
   ];
 
   Future<void> _completeOnboarding() async {

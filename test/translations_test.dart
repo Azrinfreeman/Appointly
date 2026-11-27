@@ -4,7 +4,7 @@ import 'package:calendar_appointment_app/utils/translations.dart';
 void main() {
   group('Translations Tests', () {
     test('Look up English translation', () {
-      expect(Translations.get('appTitle', 'en'), 'My Appointments');
+      expect(Translations.get('appTitle', 'en'), 'Appointly');
       expect(Translations.get('calendarTab', 'en'), 'Calendar');
     });
 

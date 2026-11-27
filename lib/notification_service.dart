@@ -14,6 +14,10 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
+    if (kIsWeb) {
+      return;
+    }
+
     // 1. Initialize Timezones
     tz.initializeTimeZones();
     try {
@@ -71,6 +75,10 @@ class NotificationService {
   }
 
   Future<void> scheduleReminder(Appointment appt) async {
+    if (kIsWeb) {
+      return;
+    }
+
     try {
       // Cancel any existing reminder for this appointment first
       await cancelReminder(appt.id);
@@ -169,6 +177,10 @@ class NotificationService {
   }
 
   Future<void> cancelReminder(String apptId) async {
+    if (kIsWeb) {
+      return;
+    }
+
     try {
       await _notificationsPlugin.cancel(apptId.hashCode);
     } catch (e) {
